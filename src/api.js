@@ -1,8 +1,7 @@
 const baseUrl = 'https://reqres.in/api'
 
-// eslint-disable-next-line no-unused-vars
-async function fetchUsers() {
-  const response = await fetch(`${baseUrl}/users`)
+async function fetchUsers(queryParams = {}) {
+  const response = await fetch(`${baseUrl}/users?${new URLSearchParams(queryParams)}`)
   return {
     status: response.status,
     headers: response.headers,
@@ -63,6 +62,7 @@ async function deleteUser(id) {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 async function createUser(data) {
   const response = await fetch(`${baseUrl}/users`, {
     method: 'POST',
@@ -80,9 +80,9 @@ async function createUser(data) {
 
 ;(async () => {
   try {
-    const response = await createUser({
-      name: 'Damir Rysaev',
-      job: 'TechLead'
+    const response = await fetchUsers({
+      page: 100,
+      per_page: 1
     })
     console.log('status', response.status)
     console.log('data', response.data)
