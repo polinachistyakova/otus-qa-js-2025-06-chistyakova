@@ -1,18 +1,28 @@
 import { config as _config } from '../framework'
-import supertest from 'supertest'
+import got from 'got'
 
 const config = _config.dummyjson
 
+/**
+ * Чтобы got работал вместе с jest
+ * нужно добавить в jest.config.js
+ *   transformIgnorePatterns: [
+ *     "/node_modules/(?!got)/"
+ *   ]
+ * DOC: https://jestjs.io/docs/configuration#transformignorepatterns-arraystring
+ */
+
 describe('Auth', () => {
   it('Success login', async () => {
-    // prettier-ignore
-    const response = await supertest(config.baseURL)
-      .post('/auth/login')
-      .send({
+    const response = await got.post(`${config.baseURL}/auth/login`, {
+      json: {
         username: config.username,
-        password: config.password
-      })
-    expect(response.status).toEqual(200)
+        password: config.password,
+        expiresInMins: 30
+      },
+      responseType: 'json'
+    })
+    expect(response.statusCode).toEqual(200)
     expect(response.body.username).toBe(config.username)
     expect(response.body.accessToken).toBeTruthy()
   })
