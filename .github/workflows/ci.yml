@@ -1,6 +1,6 @@
 name: CI
 
-on: [push, pull_request]
+on: push
 
 jobs:
   codestyle:
@@ -25,5 +25,5 @@ jobs:
           node-version: 22.13.1
           cache: 'npm'
       - run: npm ci
-      - run: echo "${{variables.ENV_FILE}}" >> .env
+      - run: echo "${{vars.ENV_FILE}}" >> .env
       - run: npm test

@@ -7,7 +7,7 @@
     "start": "babel-node src/main.js",
     "lint:ci": "eslint .",
     "lint": "eslint . --fix",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "author": "Damir Rysaev <freepad@ya.ru>",
   "keywords": [],

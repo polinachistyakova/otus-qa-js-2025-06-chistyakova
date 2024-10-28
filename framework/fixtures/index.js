@@ -1,1 +1,1 @@
-export * from './userFixture'
+export * as UserFixture from './userFixture'

@@ -1,4 +1,4 @@
-import { config as _config } from '../framework'
+import { config as _config } from '../../framework'
 import got from 'got'
 
 const config = _config.dummyjson
