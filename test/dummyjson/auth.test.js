@@ -1,4 +1,4 @@
-import { config as _config } from '../../framework'
+import { config as _config, UserDummyService } from '../../framework'
 import got from 'got'
 
 const config = _config.dummyjson
@@ -13,6 +13,8 @@ const config = _config.dummyjson
  */
 
 describe('Auth', () => {
+  // beforeEach
+
   it('Success login', async () => {
     const response = await got.post(`${config.baseURL}/auth/login`, {
       json: {
@@ -41,5 +43,20 @@ describe('Auth', () => {
 
     expect(response.status).toEqual(400)
     expect(data.message).toBe('Invalid credentials')
+  })
+
+  it('me information', async () => {
+    const responseToken = await UserDummyService.login({
+      username: config.username,
+      password: config.password
+    })
+
+    const responseMe = await UserDummyService.me({
+      token: responseToken.data.accessToken
+    })
+
+    expect(responseToken.status).toEqual(200)
+    expect(responseMe.status).toBe(200)
+    expect(responseMe.data.email).toEqual('emily.johnson@x.dummyjson.com')
   })
 })
