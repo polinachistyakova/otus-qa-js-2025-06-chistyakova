@@ -1,8 +1,6 @@
-const config = {
-  baseURL: process.env.TEST_DUMMYJSON_API_URL,
-  username: process.env.TEST_DUMMYJSON_USERNAME,
-  password: process.env.TEST_DUMMYJSON_PASSWORD
-}
+import { config as _config } from '../framework'
+
+const config = _config.dummyjson
 
 describe('Auth', () => {
   it('Success login', async () => {
