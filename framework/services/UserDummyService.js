@@ -31,9 +31,7 @@ const login = async ({ username, password, expiresInMins }) => {
 }
 
 const getMe = async ({ token }) => {
-  const response = await supertest(config.baseURL)
-    .get('/user/me')
-    .set('Authorization', `Bearer ${token}`)
+  const response = await supertest(config.baseURL).get('/user/me').set('Authorization', `Bearer ${token}`)
 
   return {
     headers: response.headers,
