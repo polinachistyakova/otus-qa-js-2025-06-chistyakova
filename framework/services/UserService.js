@@ -1,54 +1,70 @@
-import axios from 'axios'
-import config from '../config/configBookstore'
+import axios from 'axios';
+import config from '../config/config';
 
-const client = axios.create({
+// Базовый клиент без авторизации
+const baseClient = axios.create({
   baseURL: config.baseURL,
-  validateStatus: () => true
-})
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  },
+  validateStatus: function (status) {
+    return status < 500; 
+  }
+});
 
-const getUser = async ({ userId, token }) => {
-  const response = await client.get(`/Account/v1/User/${userId}`, {
+// Функция для создания клиента с токеном
+const createAuthenticatedClient = (token) => {
+  return axios.create({
+    baseURL: config.baseURL,
     headers: {
-      Authorization: `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    validateStatus: function (status) {
+      return status < 500;
     }
-  })
-
-  return {
-    headers: response.headers,
-    status: response.status,
-    data: response.data
-  }
-}
-
-const createUser = async ({ userName, password }) => {
-  const response = await client.post(`/Account/v1/User`, {
-    userName,
-    password
-  })
-
-  return {
-    headers: response.headers,
-    status: response.status,
-    data: response.data
-  }
-}
-
-const removeUser = async ({ userId, token }) => {
-  const response = await client.delete(`/Account/v1/User/${userId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-
-  return {
-    headers: response.headers,
-    status: response.status,
-    data: response.data
-  }
-}
+  });
+};
 
 export default {
-  get: getUser,
-  create: createUser,
-  remove: removeUser
-}
+  async createUser(userData) {
+    const response = await baseClient.post('/Account/v1/User', userData);
+    return this._handleResponse(response);
+  },
+
+  async generateToken(userData) {
+    const response = await baseClient.post('/Account/v1/GenerateToken', userData);
+    return this._handleResponse(response);
+  },
+
+  async authorize(credentials) {
+    const response = await baseClient.post('/Account/v1/Authorized', credentials);
+    return this._handleResponse(response);
+  },
+
+  async getUser(userId, token) {
+    const client = createAuthenticatedClient(token);
+    const response = await client.get(`/Account/v1/User/${userId}`);
+    return this._handleResponse(response);
+  },
+
+ async deleteUser(userId, token) {
+  const client = createAuthenticatedClient(token);
+  const response = await client.delete(`${config.endpoints.deleteUser}/${userId}`);
+  // Возвращаем весь response, а не только данные
+  return response;
+},
+
+
+  _handleResponse(response) {
+    if (response.status >= 200 && response.status < 300) {
+      return response.data;
+    }
+    
+    const error = new Error(response.data?.message || `Request failed with status ${response.status}`);
+    error.response = response;
+    throw error;
+  }
+};
