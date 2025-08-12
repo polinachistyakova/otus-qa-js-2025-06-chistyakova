@@ -39,12 +39,12 @@ export default {
     return this._handleResponse(response);
   },
 
+
 async authorize(credentials) {
   const response = await baseClient.post('/Account/v1/Authorized', credentials);
-  console.log('Raw auth response:', response.data); // Добавьте логирование
+  console.log('Raw auth response:', response.data); 
   return this._handleResponse(response);
 },
-
   async getUser(userId, token) {
     const client = createAuthenticatedClient(token);
     const response = await client.get(`/Account/v1/User/${userId}`);
