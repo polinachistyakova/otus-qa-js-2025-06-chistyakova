@@ -14,7 +14,7 @@ describe('User API Tests', () => {
     // Создаем пользователя перед тестами
     const createResponse = await UserService.createUser(userData);
     testUserId = createResponse.userID;
-    
+
     // Генерируем токен сразу для всех тестов
     const tokenData = await UserService.generateToken(userData);
     authToken = tokenData.token;
@@ -33,13 +33,18 @@ describe('User API Tests', () => {
   });
 
   it('Должен успешно авторизовать пользователя', async () => {
-    const authData = await UserService.authorize({
+    const authResult = await UserService.authorize({
       userName: userData.userName,
       password: userData.password
     });
 
-    expect(authData).toBeTruthy();
-    expect(authData.status).toBe('Success');
+    console.log('Auth result:', authResult);
+
+    // Проверяем, что авторизация успешна (возвращает true)
+    expect(authResult).toBe(true);
+
+    // ИЛИ, если сервер возвращает объект с другим полем:
+    // expect(authResult.isAuthenticated).toBe(true);
   });
 
   it('Должен получать данные пользователя по ID', async () => {
